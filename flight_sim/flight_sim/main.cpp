@@ -78,12 +78,14 @@ int main()
     // build and compile shaders
     Shader UFOShader("UFOvertex.vs", "UFOfragment.fs");
     Shader GrassShader("Grass.vs", "Grass.fs");
+    Shader HouseShader("House.vs", "House.fs");
 
     // Surface
     Surface Grass;
 
     // load models
     Model UFOModel("resources/objects/UFO/UFO.obj");
+    Model House("resources/objects/House2/house2.obj");
     Model UFOModel2 = UFOModel;  
     Model UFOModel3 = UFOModel;
 
@@ -139,6 +141,7 @@ int main()
         UFOShader.setMat4("model", model3);
         UFOModel3.Draw(UFOShader);  
 
+
         // render surface
         glm::mat4 grassModel = glm::mat4(1.0f);
         model3 = glm::translate(grassModel, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -147,6 +150,28 @@ int main()
         GrassShader.setMat4("projection", projection);
         GrassShader.setMat4("view", view);
         Grass.Draw(GrassShader);
+
+
+        // render houses
+        for(int i = 1; i <= 3; i++)
+        {
+            glm::mat4 model4 = glm::mat4(1.0f);
+            model4 = glm::translate(model4, glm::vec3(1.0f*(i%2 ? -i : i)*10, 1.5f+i, 15.0f));
+            model4 = glm::scale(model4, glm::vec3(1.0f*i, 1.0f*i, 1.0f*i));
+            model4 = glm::rotate(model4, glm::radians(90.0f * i), glm::vec3(0.0f, 1.0f, 0.0f));
+            HouseShader.setMat4("model", model4);
+            House.Draw(HouseShader);
+        }
+        
+        for(int i = 1; i < 3; i++)
+        {
+            glm::mat4 model4 = glm::mat4(1.0f);
+            model4 = glm::translate(model4, glm::vec3(-2.0f*(i%2 ? -i : i)*5, 1.5f*i, -15.0f));
+            model4 = glm::scale(model4, glm::vec3(1.0f*i, 1.0f*i, 1.0f*i));
+            model4 = glm::rotate(model4, glm::radians(90.0f * i), glm::vec3(0.0f, 1.0f, 0.0f));
+            HouseShader.setMat4("model", model4);
+            House.Draw(HouseShader);
+        }
 
         // swap buffers and poll IO events
         glfwSwapBuffers(window);
