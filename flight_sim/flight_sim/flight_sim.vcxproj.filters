@@ -67,5 +67,7 @@
     <None Include="Grass.fs" />
     <None Include="House.fs" />
     <None Include="House.vs" />
+    <None Include="Sphere.vs" />
+    <None Include="Sphere.fs" />
   </ItemGroup>
 </Project>

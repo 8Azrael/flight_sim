@@ -149,6 +149,8 @@
     <None Include="Grass.vs" />
     <None Include="House.fs" />
     <None Include="House.vs" />
+    <None Include="Sphere.fs" />
+    <None Include="Sphere.vs" />
     <None Include="UFOfragment.fs" />
     <None Include="UFOvertex.vs" />
   </ItemGroup>

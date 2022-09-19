@@ -79,6 +79,7 @@ int main()
     Shader UFOShader("UFOvertex.vs", "UFOfragment.fs");
     Shader GrassShader("Grass.vs", "Grass.fs");
     Shader HouseShader("House.vs", "House.fs");
+    Shader SphereShader("Sphere.vs", "Sphere.fs");
 
     // setup materials
     Material UFOMaterial;
@@ -88,18 +89,23 @@ int main()
     // setup lights
     DirLight Sun;
     setupDirLight(Sun);
-    PointLight(Ball);
-    setupPointLight(Ball);
+    PointLight Sphere;
+    setupPointLight(Sphere);
 
+    // Sphere
+    Entity SphereEntity(Sphere.position);
     // Surface
     Surface Grass;
 
     // load models
     Model UFOModel("resources/objects/UFO/UFO.obj");
     Model House("resources/objects/House2/house2.obj");
+    Model SphereModel("resources/objects/Sphere/sphere.obj");
 
-    // bind UFO object with a model
+    // bind objects with models
     UFO1.EntityModel = &UFOModel;
+    SphereEntity.EntityModel = &SphereModel;
+
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -121,34 +127,49 @@ int main()
         glm::mat4 projection = glm::perspective(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
         glm::mat4 view = camera.GetViewMatrix();          
 
-        // render the loaded model
-        UFOShader.use();
-        // calculate model matrix
+        // render UFO        
         UFO1.Move(deltaTime);
         glm::mat4 model = glm::mat4(1.0f);        
         model = glm::translate(model, UFO1.Position);
         model = glm::rotate(model, -glm::radians(UFO1.Yaw), UFO1.Up);
         model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
-        // set uniforms
+        
+        UFOShader.use();
         UFOShader.setMat4("projection", projection);
         UFOShader.setMat4("view", view);
         UFOShader.setMat4("model", model);
         UFOShader.setVec3("viewPos", camera.Position);
         setMaterialUniforms(UFOShader, UFOMaterial);
-        setPointLightUniforms(UFOShader, Ball);
+        setPointLightUniforms(UFOShader, Sphere);
         setDirLightUniforms(UFOShader, Sun);        
+        
         UFO1.Draw(UFOShader);
 
         // render surface
         glm::mat4 grassModel = glm::mat4(1.0f);
+        
         GrassShader.use();
         GrassShader.setMat4("model", grassModel);
         GrassShader.setMat4("projection", projection);
         GrassShader.setMat4("view", view);
         GrassShader.setVec3("viewPos", camera.Position);
-        setPointLightUniforms(GrassShader, Ball);
+        setPointLightUniforms(GrassShader, Sphere);
         setDirLightUniforms(GrassShader, Sun);
+        
         Grass.Draw(GrassShader);
+
+        // render sphere
+        glm::mat4 sphereModel = glm::mat4(1.0f);
+        sphereModel = glm::translate(sphereModel, SphereEntity.Position);
+        sphereModel = glm::scale(sphereModel, glm::vec3(1.0f, 1.0f, 1.0f));
+
+        SphereShader.use();
+        SphereShader.setMat4("model", sphereModel);
+        SphereShader.setMat4("projection", projection);
+        SphereShader.setMat4("view", view);
+        SphereShader.setVec3("aColor", Sphere.diffuse);
+
+        SphereEntity.Draw(SphereShader);
 
         HouseShader.use();
         // render houses
@@ -163,7 +184,7 @@ int main()
             HouseShader.setMat4("view", view);
             HouseShader.setVec3("viewPos", camera.Position);
             setMaterialUniforms(HouseShader, HouseMaterial);
-            setPointLightUniforms(HouseShader, Ball);
+            setPointLightUniforms(HouseShader, Sphere);
             setDirLightUniforms(HouseShader, Sun);
             House.Draw(HouseShader);
         }
@@ -179,7 +200,7 @@ int main()
             HouseShader.setMat4("view", view);
             HouseShader.setVec3("viewPos", camera.Position);
             setMaterialUniforms(HouseShader, HouseMaterial);
-            setPointLightUniforms(HouseShader, Ball);
+            setPointLightUniforms(HouseShader, Sphere);
             setDirLightUniforms(HouseShader, Sun);
             House.Draw(HouseShader);
         }
