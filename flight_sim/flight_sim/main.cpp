@@ -10,6 +10,8 @@
 #include "model.h"
 #include "UFO.h"
 #include "surface.h"
+#include "Materials.h"
+#include "Lights.h"
 
 #include <iostream>
 
@@ -22,8 +24,8 @@ void processInput(GLFWwindow* window);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 // settings
-const unsigned int SCR_WIDTH = 3440;
-const unsigned int SCR_HEIGHT = 1440;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
 // UFO
 UFO UFO1(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -65,7 +67,6 @@ int main()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // glad: load all OpenGL function pointers
-    // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
@@ -79,18 +80,33 @@ int main()
     Shader UFOShader("UFOvertex.vs", "UFOfragment.fs");
     Shader GrassShader("Grass.vs", "Grass.fs");
     Shader HouseShader("House.vs", "House.fs");
+    Shader SphereShader("Sphere.vs", "Sphere.fs");
 
+    // setup materials
+    Material UFOMaterial;
+    setupUFOMaterial(UFOMaterial);
+    Material HouseMaterial;
+    setupHouseMaterial(HouseMaterial);
+    // setup lights
+    DirLight Sun;
+    setupDirLight(Sun);
+    PointLight Sphere;
+    setupPointLight(Sphere);
+
+    // Sphere
+    Entity SphereEntity(Sphere.position);
     // Surface
     Surface Grass;
 
     // load models
     Model UFOModel("resources/objects/UFO/UFO.obj");
     Model House("resources/objects/House2/house2.obj");
-    Model UFOModel2 = UFOModel;  
-    Model UFOModel3 = UFOModel;
+    Model SphereModel("resources/objects/Sphere/sphere.obj");
 
-    // bind UFO object with a model
+    // bind objects with models
     UFO1.EntityModel = &UFOModel;
+    SphereEntity.EntityModel = &SphereModel;
+
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -144,59 +160,85 @@ int main()
         model = glm::translate(model, UFO1.Position);
         model = glm::rotate(model, -glm::radians(UFO1.Yaw), UFO1.Up);
         model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+        
+        UFOShader.use();
+        UFOShader.setMat4("projection", projection);
+        UFOShader.setMat4("view", view);
         UFOShader.setMat4("model", model);
         UFOShader.setVec3("viewPos", camera.Position);
+        setMaterialUniforms(UFOShader, UFOMaterial);
+        setPointLightUniforms(UFOShader, Sphere);
+        setDirLightUniforms(UFOShader, Sun);        
+        
         UFO1.Draw(UFOShader);
-
-        // render the loaded model2
-        glm::mat4 model2 = glm::mat4(1.0f);
-        model2 = glm::translate(model2, glm::vec3(3.0f, 0.0f, 0.0f));
-        model2 = glm::scale(model2, glm::vec3(0.05f, 0.05f, 0.05f));
-        UFOShader.setMat4("model", model2);
-        UFOModel2.Draw(UFOShader);
-
-        // render the loaded model3
-        glm::mat4 model3 = glm::mat4(1.0f);
-        model3 = glm::translate(model3, glm::vec3(-3.0f, 0.0f, 0.0f));
-        model3 = glm::scale(model3, glm::vec3(0.05f, 0.05f, 0.05f));
-        UFOShader.setMat4("model", model3);
-        UFOModel3.Draw(UFOShader);  
-
 
         // render surface
         glm::mat4 grassModel = glm::mat4(1.0f);
-        model3 = glm::translate(grassModel, glm::vec3(0.0f, 0.0f, 0.0f));
+        
         GrassShader.use();
         GrassShader.setMat4("model", grassModel);
         GrassShader.setMat4("projection", projection);
         GrassShader.setMat4("view", view);
+        GrassShader.setVec3("viewPos", camera.Position);
+        setPointLightUniforms(GrassShader, Sphere);
+        setDirLightUniforms(GrassShader, Sun);
+        
         Grass.Draw(GrassShader);
 
+        // render sphere
+        glm::mat4 sphereModel = glm::mat4(1.0f);
+        sphereModel = glm::translate(sphereModel, SphereEntity.Position);
+        sphereModel = glm::scale(sphereModel, glm::vec3(1.0f, 1.0f, 1.0f));
 
+        SphereShader.use();
+        SphereShader.setMat4("model", sphereModel);
+        SphereShader.setMat4("projection", projection);
+        SphereShader.setMat4("view", view);
+        SphereShader.setVec3("aColor", Sphere.diffuse);
+
+        SphereEntity.Draw(SphereShader);
+
+        SphereShader.use();
+        SphereShader.setMat4("model", sphereModel);
+        SphereShader.setMat4("projection", projection);
+        SphereShader.setMat4("view", view);
+        SphereShader.setVec3("aColor", Sphere.diffuse);
+
+        SphereEntity.Draw(SphereShader);
+
+        HouseShader.use();
         // render houses
-         for(int i = 1; i <= 3; i++)
-         {
-             glm::mat4 model4 = glm::mat4(1.0f);
-             model4 = glm::translate(model4, glm::vec3(1.0f*(i%2 ? -i : i)*10, 1.5f+i, 15.0f));
-             model4 = glm::scale(model4, glm::vec3(1.0f*i, 1.0f*i, 1.0f*i));
-            //  model4 = glm::rotate(model4, glm::radians(90.0f * i), glm::vec3(0.0f, 1.0f, 0.0f));
-             HouseShader.setMat4("model", model4);
-             House.Draw(HouseShader);
-         }
-        /*glm::mat4 model4 = glm::mat4(1.0f);
-        model4 = glm::translate(model4, glm::vec3(1.0f, 2.5f, 15.0f));
-        HouseShader.setMat4("model", model4);
-        House.Draw(HouseShader);
-        */
-         for(int i = 1; i < 3; i++)
-         {
-             glm::mat4 model4 = glm::mat4(1.0f);
-             model4 = glm::translate(model4, glm::vec3(-2.0f*(i%2 ? -i : i)*5, 1.5f*i, -15.0f));
-             model4 = glm::scale(model4, glm::vec3(1.0f*i, 1.0f*i, 1.0f*i));
-            //  model4 = glm::rotate(model4, glm::radians(90.0f * i), glm::vec3(0.0f, 1.0f, 0.0f));
-             HouseShader.setMat4("model", model4);
-             House.Draw(HouseShader);
-         }
+        for (int i = 1; i <= 3; i++)
+        {
+            glm::mat4 model4 = glm::mat4(1.0f);
+            model4 = glm::translate(model4, glm::vec3(1.0f * (i % 2 ? -i : i) * 10, 1.5f + i, 15.0f));
+            model4 = glm::scale(model4, glm::vec3(1.0f * i, 1.0f * i, 1.0f * i));
+            model4 = glm::rotate(model4, glm::radians(90.0f * i), glm::vec3(0.0f, 1.0f, 0.0f));
+            HouseShader.setMat4("model", model4);
+            HouseShader.setMat4("projection", projection);
+            HouseShader.setMat4("view", view);
+            HouseShader.setVec3("viewPos", camera.Position);
+            setMaterialUniforms(HouseShader, HouseMaterial);
+            setPointLightUniforms(HouseShader, Sphere);
+            setDirLightUniforms(HouseShader, Sun);
+            House.Draw(HouseShader);
+        }
+
+        for (int i = 1; i < 3; i++)
+        {
+            glm::mat4 model4 = glm::mat4(1.0f);
+            model4 = glm::translate(model4, glm::vec3(-2.0f * (i % 2 ? -i : i) * 5, 1.5f * i, -15.0f));
+            model4 = glm::scale(model4, glm::vec3(1.0f * i, 1.0f * i, 1.0f * i));
+            model4 = glm::rotate(model4, glm::radians(90.0f * i), glm::vec3(0.0f, 1.0f, 0.0f));
+            HouseShader.setMat4("model", model4);
+            HouseShader.setMat4("projection", projection);
+            HouseShader.setMat4("view", view);
+            HouseShader.setVec3("viewPos", camera.Position);
+            setMaterialUniforms(HouseShader, HouseMaterial);
+            setPointLightUniforms(HouseShader, Sphere);
+            setDirLightUniforms(HouseShader, Sun);
+            House.Draw(HouseShader);
+        }
 
         // swap buffers and poll IO events
         glfwSwapBuffers(window);

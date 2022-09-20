@@ -1,3 +1,6 @@
+#ifndef SURFACE_H
+#define SURFACE_H
+
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -8,14 +11,17 @@
 class Surface {
 	public:
         unsigned int VAO;
-        unsigned int texture1;
+        unsigned int texture_diffuse;
+        unsigned int texture_specular;
+        unsigned int texture_normal;
+        unsigned int texture_height;
 
         float vertices[32] = {
-            // positions          // colors           // texture coords
-             50.0f,  0.0f,  50.0f,   1.0f, 0.0f, 0.0f,   32.0f, 32.0f, // top right
-             50.0f,  0.0f, -50.0f,   0.0f, 1.0f, 0.0f,   32.0f, 0.0f, // bottom right
-            -50.0f,  0.0f, -50.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-            -50.0f,  0.0f,  50.0f,   1.0f, 1.0f, 0.0f,   0.0f, 32.0f  // top left 
+            // positions             // normals         // texture coords
+             100.0f,  0.0f,  100.0f, 0.0f, 1.0f, 0.0f,  128.0f, 128.0f, // top right
+             100.0f,  0.0f, -100.0f, 0.0f, 1.0f, 0.0f,  128.0f, 0.0f, // bottom right
+            -100.0f,  0.0f, -100.0f, 0.0f, 1.0f, 0.0f,  0.0f, 0.0f, // bottom left
+            -100.0f,  0.0f,  100.0f, 0.0f, 1.0f, 0.0f,  0.0f, 128.0f  // top left 
         };
         unsigned int indices[6] = {
             0, 1, 3, // first triangle
@@ -24,13 +30,30 @@ class Surface {
 
         Surface() {
             SetupSurface();
-            loadTexture();
+            texture_diffuse = loadTexture("resources/textures/grass/diffuse.jpg");
+            texture_specular = loadTexture("resources/textures/grass/specular.jpg");
+            /*loadTexture("resources/textures/grass/normal.jpg", texture_normal);
+            loadTexture("resources/textures/grass/height.jpg", texture_height);*/
         }		
 
-        void Draw(Shader& shader) {                   
-            glUniform1i(glGetUniformLocation(shader.ID, "texture1"), 0);
+        void Draw(Shader& shader) {  
+            shader.use();
+
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture1);
+            glUniform1i(glGetUniformLocation(shader.ID, "material.texture_diffuse1"), 0);
+            glBindTexture(GL_TEXTURE_2D, texture_diffuse);
+
+            glActiveTexture(GL_TEXTURE1);
+            glUniform1i(glGetUniformLocation(shader.ID, "material.texture_specular1"), 0);
+            glBindTexture(GL_TEXTURE_2D, texture_specular);
+
+            //glActiveTexture(GL_TEXTURE2);
+            //glUniform1i(glGetUniformLocation(shader.ID, "texture_normal1"), 2);
+
+            //glActiveTexture(GL_TEXTURE3);
+            //glUniform1i(glGetUniformLocation(shader.ID, "texture_height1"), 3);
+            //glActiveTexture(GL_TEXTURE0);
+            
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
@@ -54,20 +77,21 @@ class Surface {
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
             // position attribute
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
-            // color attribute
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+            // normal attribute
             glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
             // texture coord attribute
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
             glEnableVertexAttribArray(2);
-
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
         }
 
-        void loadTexture() {
-            glGenTextures(1, &texture1);
-            glBindTexture(GL_TEXTURE_2D, texture1);
+        unsigned int loadTexture(const char* path) {
+            unsigned int textureID;
+
+            glGenTextures(1, &textureID);
+            glBindTexture(GL_TEXTURE_2D, textureID);
             // set the texture wrapping parameters
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -78,7 +102,7 @@ class Surface {
             // load image, create texture and generate mipmaps
             int width, height, nrChannels;
             stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-            unsigned char* data = stbi_load("resources/textures/grass/grass.jpg", &width, &height, &nrChannels, 0);
+            unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);
             if (data)
             {
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -89,5 +113,9 @@ class Surface {
                 std::cout << "Failed to load texture" << std::endl;
             }
             stbi_image_free(data);
+
+            return textureID;
         }
 };
+
+#endif

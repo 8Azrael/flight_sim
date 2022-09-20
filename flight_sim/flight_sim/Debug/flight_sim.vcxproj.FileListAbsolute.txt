@@ -1,1 +1,2 @@
 C:\Users\fsudz\source\repos\flight_sim\flight_sim\Debug\flight_sim.vcxproj.CopyComplete
+C:\Users\fsudz\OneDrive\Pulpit\flight_sim\flight_sim\Debug\flight_sim.vcxproj.CopyComplete

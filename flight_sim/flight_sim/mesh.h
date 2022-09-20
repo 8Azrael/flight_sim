@@ -50,6 +50,7 @@ public:
 
     void Draw(Shader& shader)
     {
+        string material = "material.";
         unsigned int diffuseNr = 1;
         unsigned int specularNr = 1;
         unsigned int normalNr = 1;
@@ -70,9 +71,9 @@ public:
             else if (name == "texture_height")
                 number = std::to_string(heightNr++);
             else if (name == "texture_glow")
-                number = std::to_string(heightNr++);
+                number = std::to_string(glowNr++);
             // set the sampler to the correct texture unit
-            glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
+            glUniform1i(glGetUniformLocation(shader.ID, (material + name + number).c_str()), i);
             // bind the texture
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
