@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -128,12 +128,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Lights.cpp" />
+    <ClCompile Include="Materials.cpp" />
     <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h" />
     <ClInclude Include="3rdPersonCamera.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="Materials.h" />
+    <ClInclude Include="Lights.h" />
     <ClInclude Include="surface.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
@@ -144,6 +147,10 @@
   <ItemGroup>
     <None Include="Grass.fs" />
     <None Include="Grass.vs" />
+    <None Include="House.fs" />
+    <None Include="House.vs" />
+    <None Include="Sphere.fs" />
+    <None Include="Sphere.vs" />
     <None Include="UFOfragment.fs" />
     <None Include="UFOvertex.vs" />
   </ItemGroup>

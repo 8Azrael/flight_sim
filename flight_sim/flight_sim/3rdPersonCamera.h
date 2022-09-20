@@ -31,7 +31,7 @@ class Camera {
 		Camera(UFO* ufo) {
 			Ufo = ufo;
 			Position = ufo->Position;
-			Pitch = ufo->Pitch;
+			Pitch = ufo->Pitch - 20;
 			Yaw = ufo->Yaw;
 			updateVectors();
 		}

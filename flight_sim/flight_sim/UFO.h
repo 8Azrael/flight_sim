@@ -100,15 +100,19 @@ public:
     void ProcessKeyboard(int key) {
         if (key == GLFW_KEY_A) {
             if (zVelocity >= 0 && zAcceleration >= 0) TurnAcceleration = -TURN_SPEED_ACCELERATION;
-            else if (zVelocity >= 0 && zAcceleration < 0) TurnAcceleration = TURN_SPEED_ACCELERATION;
+            else if (zVelocity >= 0 && zAcceleration < 0 && !zInput) TurnAcceleration = -TURN_SPEED_ACCELERATION;
+            else if (zVelocity >= 0 && zAcceleration < 0 && zInput) TurnAcceleration = TURN_SPEED_ACCELERATION;
             else if (zVelocity < 0 && zAcceleration < 0) TurnAcceleration = TURN_SPEED_ACCELERATION;
-            else if (zVelocity < 0 && zAcceleration >= 0) TurnAcceleration = -TURN_SPEED_ACCELERATION;
+            else if (zVelocity < 0 && zAcceleration >= 0 && zInput) TurnAcceleration = -TURN_SPEED_ACCELERATION;
+            else if (zVelocity < 0 && zAcceleration >= 0 && !zInput) TurnAcceleration = TURN_SPEED_ACCELERATION;
         }
         if (key == GLFW_KEY_D) {
             if (zVelocity >= 0 && zAcceleration >= 0) TurnAcceleration = TURN_SPEED_ACCELERATION;
-            else if (zVelocity >= 0 && zAcceleration < 0) TurnAcceleration = -TURN_SPEED_ACCELERATION;
+            else if (zVelocity >= 0 && zAcceleration < 0 && !zInput) TurnAcceleration = TURN_SPEED_ACCELERATION;
+            else if (zVelocity >= 0 && zAcceleration < 0 && zInput) TurnAcceleration = -TURN_SPEED_ACCELERATION;
             else if (zVelocity < 0 && zAcceleration < 0) TurnAcceleration = -TURN_SPEED_ACCELERATION;
-            else if (zVelocity < 0 && zAcceleration >= 0) TurnAcceleration = TURN_SPEED_ACCELERATION;
+            else if (zVelocity < 0 && zAcceleration >= 0 && zInput) TurnAcceleration = TURN_SPEED_ACCELERATION;
+            else if (zVelocity < 0 && zAcceleration >= 0 && !zInput) TurnAcceleration = -TURN_SPEED_ACCELERATION;
         }
     }
 
@@ -124,6 +128,12 @@ public:
         // calculate movement
         Position += Front * calculateDistance(zVelocity, zAcceleration, deltaTime);
         Position += glm::vec3(0.0f, 1.0f, 0.0f) * calculateDistance(yVelocity, yAcceleration, deltaTime);
+
+        if (Position.y < -0.4) {
+            Position.y = -0.4;
+            if (yVelocity < 0) yVelocity = 0;
+            if (yAcceleration < 0) yAcceleration = 0;
+        }
     }
 
 private:

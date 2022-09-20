@@ -1,3 +1,8 @@
 ﻿  main.cpp
-C:\Users\fsudz\source\repos\flight_sim\flight_sim\UFO.h(165,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  flight_sim.vcxproj -> C:\Users\fsudz\source\repos\flight_sim\Debug\flight_sim.exe
+C:\Users\fsudz\OneDrive\Pulpit\flight_sim\flight_sim\UFO.h(133,1): warning C4305: '=': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+C:\Users\fsudz\OneDrive\Pulpit\flight_sim\flight_sim\UFO.h(175,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  flight_sim.vcxproj -> C:\Users\fsudz\OneDrive\Pulpit\flight_sim\Debug\flight_sim.exe
