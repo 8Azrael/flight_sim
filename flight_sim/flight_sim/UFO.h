@@ -73,6 +73,12 @@ public:
         if (key == GLFW_KEY_D && action == GLFW_RELEASE) determineTurnRelease(tInput, TurnSpeed, TurnAcceleration);
         if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE) determineReleaseAcceleration(yInput, yVelocity, yAcceleration);
         if (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_RELEASE) determineReleaseAcceleration(yInput, yVelocity, yAcceleration);
+        if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) determineReleaseAcceleration(yInput, yVelocity, yAcceleration);
+        // go down on arrow down
+        if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+            yInput = true;
+            yAcceleration = -ACCELERATION_RATE;
+        }
         
         // key press actions
         if (key == GLFW_KEY_W && action == GLFW_PRESS) {
@@ -111,8 +117,61 @@ public:
             else if (zVelocity < 0 && zAcceleration >= 0) TurnAcceleration = TURN_SPEED_ACCELERATION;
         }
     }
+    
 
-    void Move(float deltaTime) {
+	
+	// action that blocks the user from moving in a direction
+	void BlockMovement() {
+		if (zVelocity > 0) {
+			zVelocity = 0.0f;
+			zAcceleration = 0.0f;
+			zInput = false;
+		}
+		
+	}
+
+	//block movement in the y direction
+	void BlockYMovement() {
+		if (yVelocity < 0) {
+			yVelocity = 0.0f;
+			yAcceleration = 0.0f;
+			yInput = false;
+		}
+	}
+
+    void Move(float deltaTime, Entity entity[], Entity grass) {
+		
+		//print ufo posision
+		std::cout << "UFO Position: " << Position.x << " " << Position.y << " " << Position.z << std::endl;
+        for(int i = 0; i < 5; i++) {
+            if(Position.x + 3.0f > entity[i].Position.x - 2.0f * entity[i].Scale.x
+                && Position.x - 3.0f < entity[i].Position.x + 2.0f * entity[i].Scale.x
+                && Position.y + 3.0f > entity[i].Position.y - 3.5f * entity[i].Scale.y
+                && Position.y - 3.0f < entity[i].Position.y + 3.5f * entity[i].Scale.y
+                && Position.z + 3.0f > entity[i].Position.z - 2.25f * entity[i].Scale.z
+                && Position.z - 3.0f < entity[i].Position.z + 2.25f * entity[i].Scale.z)
+            {
+                //stop moving forward
+                BlockMovement();
+            }
+		
+        }
+	
+        
+
+        // If ufo intersects grass block y movement down
+
+        if(Position.x + 3.0f > grass.Position.x * grass.Scale.x
+            && Position.x - 3.0f < grass.Position.x * grass.Scale.x
+            && Position.y + 3.0f > grass.Position.y * grass.Scale.y
+            && Position.y - 3.0f < grass.Position.y * grass.Scale.y
+            && Position.z + 3.0f > grass.Position.z  * grass.Scale.z
+            && Position.z - 3.0f < grass.Position.z * grass.Scale.z)
+        {
+            //stop moving forward
+            BlockYMovement();
+        }
+
         //calculate velocities
         zVelocity = calculateVelocity(zVelocity, zAcceleration, deltaTime, zInput);
         yVelocity = calculateVelocity(yVelocity, yAcceleration, deltaTime, yInput);

@@ -26,7 +26,7 @@ const unsigned int SCR_WIDTH = 3440;
 const unsigned int SCR_HEIGHT = 1440;
 
 // UFO
-UFO UFO1(glm::vec3(0.0f, -2.0f, 0.0f));
+UFO UFO1(glm::vec3(0.0f, 0.0f, 0.0f));
 
 
 // camera
@@ -117,9 +117,31 @@ int main()
         UFOShader.setMat4("projection", projection);
         UFOShader.setMat4("view", view);
 
+        //Entity House1(glm::vec3(-31.5f, 5.5f, 15.0f));
+        
+
+        Entity House1(glm::vec3(-9.0f, 1.2f, 14.5f),glm::vec3(0.0f, 0.0f, -1.0f),glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+        Entity House2(glm::vec3(20.0f, 4.0f, 15.0f),glm::vec3(0.0f, 0.0f, -1.0f),glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(2.0f, 2.0f, 2.0f));
+        Entity House3(glm::vec3(-30.5f, 5.5f, 14.5f), glm::vec3(0.0f, 0.0f, -1.0f),glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(3.1f, 3.1f, 3.1f));
+        Entity House4(glm::vec3(9.0f, 1.2f, -14.5f),glm::vec3(0.0f, 0.0f, -1.0f),glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+        Entity House5(glm::vec3(-20.0f, 4.0f, -15.0f),glm::vec3(0.0f, 0.0f, -1.0f),glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(2.0f, 2.0f, 2.0f));
+        Entity GrassEntity(glm::vec3(0.0f, 0.0f,0.0),glm::vec3(0.0f, 0.0f, -1.0f),glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(25.0f, 1.0f, 25.0f));
+
+        
+
+        Entity Houses[5] = {
+            House1,
+            House2,
+            House3,
+            House4,
+            House5,
+            };
+		
+		
+
         // render the loaded model
-        UFO1.Move(deltaTime);
-        glm::mat4 model = glm::mat4(1.0f);        
+		UFO1.Move(deltaTime, Houses, GrassEntity);
+        glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, UFO1.Position);
         model = glm::rotate(model, -glm::radians(UFO1.Yaw), UFO1.Up);
         model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
@@ -153,25 +175,29 @@ int main()
 
 
         // render houses
-        for(int i = 1; i <= 3; i++)
-        {
-            glm::mat4 model4 = glm::mat4(1.0f);
-            model4 = glm::translate(model4, glm::vec3(1.0f*(i%2 ? -i : i)*10, 1.5f+i, 15.0f));
-            model4 = glm::scale(model4, glm::vec3(1.0f*i, 1.0f*i, 1.0f*i));
-            model4 = glm::rotate(model4, glm::radians(90.0f * i), glm::vec3(0.0f, 1.0f, 0.0f));
-            HouseShader.setMat4("model", model4);
-            House.Draw(HouseShader);
-        }
-        
-        for(int i = 1; i < 3; i++)
-        {
-            glm::mat4 model4 = glm::mat4(1.0f);
-            model4 = glm::translate(model4, glm::vec3(-2.0f*(i%2 ? -i : i)*5, 1.5f*i, -15.0f));
-            model4 = glm::scale(model4, glm::vec3(1.0f*i, 1.0f*i, 1.0f*i));
-            model4 = glm::rotate(model4, glm::radians(90.0f * i), glm::vec3(0.0f, 1.0f, 0.0f));
-            HouseShader.setMat4("model", model4);
-            House.Draw(HouseShader);
-        }
+         for(int i = 1; i <= 3; i++)
+         {
+             glm::mat4 model4 = glm::mat4(1.0f);
+             model4 = glm::translate(model4, glm::vec3(1.0f*(i%2 ? -i : i)*10, 1.5f+i, 15.0f));
+             model4 = glm::scale(model4, glm::vec3(1.0f*i, 1.0f*i, 1.0f*i));
+            //  model4 = glm::rotate(model4, glm::radians(90.0f * i), glm::vec3(0.0f, 1.0f, 0.0f));
+             HouseShader.setMat4("model", model4);
+             House.Draw(HouseShader);
+         }
+        /*glm::mat4 model4 = glm::mat4(1.0f);
+        model4 = glm::translate(model4, glm::vec3(1.0f, 2.5f, 15.0f));
+        HouseShader.setMat4("model", model4);
+        House.Draw(HouseShader);
+        */
+         for(int i = 1; i < 3; i++)
+         {
+             glm::mat4 model4 = glm::mat4(1.0f);
+             model4 = glm::translate(model4, glm::vec3(-2.0f*(i%2 ? -i : i)*5, 1.5f*i, -15.0f));
+             model4 = glm::scale(model4, glm::vec3(1.0f*i, 1.0f*i, 1.0f*i));
+            //  model4 = glm::rotate(model4, glm::radians(90.0f * i), glm::vec3(0.0f, 1.0f, 0.0f));
+             HouseShader.setMat4("model", model4);
+             House.Draw(HouseShader);
+         }
 
         // swap buffers and poll IO events
         glfwSwapBuffers(window);
