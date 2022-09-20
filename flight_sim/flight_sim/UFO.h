@@ -139,7 +139,7 @@ public:
 		}
 	}
 
-    void Move(float deltaTime, Entity entity[], Entity grass) {
+    void Move(float deltaTime, Entity entity[]) {
 		
 		//print ufo posision
 		std::cout << "UFO Position: " << Position.x << " " << Position.y << " " << Position.z << std::endl;
@@ -158,19 +158,6 @@ public:
         }
 	
         
-
-        // If ufo intersects grass block y movement down
-
-        if(Position.x + 3.0f > grass.Position.x * grass.Scale.x
-            && Position.x - 3.0f < grass.Position.x * grass.Scale.x
-            && Position.y + 3.0f > grass.Position.y * grass.Scale.y
-            && Position.y - 3.0f < grass.Position.y * grass.Scale.y
-            && Position.z + 3.0f > grass.Position.z  * grass.Scale.z
-            && Position.z - 3.0f < grass.Position.z * grass.Scale.z)
-        {
-            //stop moving forward
-            BlockYMovement();
-        }
 
         //calculate velocities
         zVelocity = calculateVelocity(zVelocity, zAcceleration, deltaTime, zInput);

@@ -125,7 +125,6 @@ int main()
         Entity House3(glm::vec3(-30.5f, 5.5f, 14.5f), glm::vec3(0.0f, 0.0f, -1.0f),glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(3.1f, 3.1f, 3.1f));
         Entity House4(glm::vec3(9.0f, 1.2f, -14.5f),glm::vec3(0.0f, 0.0f, -1.0f),glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
         Entity House5(glm::vec3(-20.0f, 4.0f, -15.0f),glm::vec3(0.0f, 0.0f, -1.0f),glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(2.0f, 2.0f, 2.0f));
-        Entity GrassEntity(glm::vec3(0.0f, 0.0f,0.0),glm::vec3(0.0f, 0.0f, -1.0f),glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(25.0f, 1.0f, 25.0f));
 
         
 
@@ -140,7 +139,7 @@ int main()
 		
 
         // render the loaded model
-		UFO1.Move(deltaTime, Houses, GrassEntity);
+		UFO1.Move(deltaTime, Houses);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, UFO1.Position);
         model = glm::rotate(model, -glm::radians(UFO1.Yaw), UFO1.Up);
