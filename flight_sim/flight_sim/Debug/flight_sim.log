@@ -1,5 +1,0 @@
-﻿  main.cpp
-C:\Users\fsudz\source\repos\flight_sim\flight_sim\UFO.h(173,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\fsudz\source\repos\flight_sim\flight_sim\3rdPersonCamera.h(38,29): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\fsudz\source\repos\flight_sim\flight_sim\3rdPersonCamera.h(39,27): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  flight_sim.vcxproj -> C:\Users\fsudz\source\repos\flight_sim\Debug\flight_sim.exe
